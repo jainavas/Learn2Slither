@@ -8,43 +8,42 @@ class Interpreter:
 	def get_state(self):
 		head_x, head_y = self.env.get_head_position()
 		state = ""
-		
-		# UP
-		for i in range(1, 10):
-			y = head_y - i
+	
+		# UP - construir desde arriba hacia la cabeza para que aparezca arriba
+		state += "W\n"
+		for y in range(0, head_y):  # Desde 0 hasta justo antes de la cabeza
 			char = self.get_char_at(head_x, y)
-			state += char
-			state += "\n"
+			state += char + "\n"
 			if char == "W":
 				break
-		
-		# LEFT - recorre al revés
-		for i in range(9, 0, -1):
-			x = head_x - i
+		# LEFT - construir desde la izquierda hacia la cabeza
+		state += "W"
+		for x in range(0, head_x):  # Desde 0 hasta justo antes de la cabeza
 			char = self.get_char_at(x, head_y)
 			state += char
 			if char == "W":
 				break
-
+		
+		# HEAD
 		state += 'H'
-
-		# RIGHT
-		for i in range(1, 10):
-			x = head_x + i
+		
+		# RIGHT - desde la cabeza hacia la derecha
+		for x in range(head_x + 1, 10):
 			char = self.get_char_at(x, head_y)
 			state += char
 			if char == "W":
-				break
-
-		# DOWN
-		for i in range(1, 10):
-			y = head_y + i
+				break		
+		state += "W\n"
+		
+		# DOWN - desde la cabeza hacia abajo
+		for y in range(head_y + 1, 10):
 			char = self.get_char_at(head_x, y)
-			state += char
-			state += "\n"
+			state += char + "\n"
 			if char == "W":
 				break
-
+		
+		state += "W"
+		
 		return state
 
 	def get_char_at(self, x, y):
@@ -59,13 +58,3 @@ class Interpreter:
 			return "G"
 		elif cell == 3:
 			return "R"
-		
-# main.py o test simple
-from environment import Board
-
-env = Board()
-env.reset()
-
-interp = Interpreter(env)
-state = interp.get_state()
-print(state)

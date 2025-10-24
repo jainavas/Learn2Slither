@@ -25,11 +25,7 @@ class Board:
 	}
 
 	def is_valid_position(self, new_x, new_y):
-		try:
-			val = self.board[new_y][new_x]
-			return True
-		except:
-			return False
+		return 0 <= new_x < 10 and 0 <= new_y < 10
 
 	def move_snake(self, direction):
 		dy, dx = self.DIRECTIONS[direction]
@@ -72,6 +68,7 @@ class Board:
 	def reset(self):
 		self.board = [[0 for _ in range(10)] for _ in range(10)]
 		self.len = 3
+		self.segments = []
 		while True:
 			x = random.randint(0, 9)
 			y = random.randint(0, 9)
@@ -79,12 +76,13 @@ class Board:
 				break
 		for direction_name, (dx, dy) in self.DIRECTIONS.items():
 			if (self.is_valid_position(x + dx * 2, y + dy * 2)):
-				self.board[y + dy * 2][x + dx * 2] = 1
-				self.segments.insert(0, (x + dx * 2, y + dy * 2))
-				self.board[y + dy][x + dx] = 1
-				self.segments.insert(0, (x + dx, y + dy))
-				self.board[y][x] = 1
 				self.segments.insert(0, (x, y))
+				self.segments.insert(0, (x + dx, y + dy))
+				self.segments.insert(0, (x + dx * 2, y + dy * 2))
+				self.board[y + dy * 2][x + dx * 2] = 1
+				self.board[y + dy][x + dx] = 1
+				self.board[y][x] = 1
+				
 				self.direction = direction_name
 				break
 		self.snk_eats_apple(2)
@@ -107,3 +105,7 @@ class Board:
 	def is_game_over(self):
 		"""Devuelve si terminó"""
 		return self.game_over
+
+	def printmap(self):
+		for i in self.board:
+			print(i)
