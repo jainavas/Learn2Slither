@@ -60,5 +60,5 @@ class Agent:
     
     def decay_epsilon(self):
         """Reduce epsilon después de cada episodio para favorecer explotación"""
-        self.epsilon *= 0.995
+        self.epsilon *= 0.99
         self.epsilon = max(self.epsilon, 0.01)  # No bajar de 0.01

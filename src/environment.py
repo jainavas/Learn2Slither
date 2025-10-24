@@ -29,21 +29,21 @@ class Board:
 		return 0 <= new_x < 10 and 0 <= new_y < 10
 
 	def move_snake(self, direction):
-		dy, dx = self.DIRECTIONS[direction]
+		dx, dy = self.DIRECTIONS[direction]
 		new_x = self.segments[0][0] + dx
 		new_y = self.segments[0][1] + dy
 		
 		# Validar límites
 		if not self.is_valid_position(new_x, new_y):
 			self.game_over = True
-			return -100, self.game_over
+			return -50, self.game_over
 		
 		val = self.board[new_y][new_x]
 		
 		# Colisión consigo mismo
 		if val == 1:
 			self.game_over = True
-			return -100, self.game_over
+			return -50, self.game_over
 		
 		# Mover cabeza
 		self.segments.insert(0, (new_x, new_y))
@@ -53,7 +53,7 @@ class Board:
 		if val == 2:  # manzana verde
 			self.len += 1
 			self.snk_eats_apple(2)
-			return 20, self.game_over
+			return 10, self.game_over
 		elif val == 3:  # manzana roja
 			self.len -= 1
 			x, y = self.segments[-1]
@@ -62,14 +62,14 @@ class Board:
 			self.snk_eats_apple(3)
 			if self.len == 0:
 				self.game_over = True
-				return -100, self.game_over
+				return -50, self.game_over
 			else:
-				return -10, self.game_over
+				return -5, self.game_over
 		else:  # val == 0
-			self.segments.pop()
 			old_x, old_y = self.segments[-1]
 			self.board[old_y][old_x] = 0
-			return -1, self.game_over
+			self.segments.pop()
+			return -0.1, self.game_over
 
 	def reset(self):
 		self.board = [[0 for _ in range(10)] for _ in range(10)]
@@ -92,6 +92,7 @@ class Board:
 				
 				self.direction = direction_name
 				break
+		self.snk_eats_apple(2)
 		self.snk_eats_apple(2)
 		self.snk_eats_apple(3)
 
