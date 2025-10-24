@@ -77,7 +77,8 @@ class Board:
 			tail_x, tail_y = self.segments[-1]
 			self.board[tail_y][tail_x] = 0
 			self.segments.pop()
-			return 0, self.game_over  # Pequeña recompensa por sobrevivir
+			recompensa_proximidad = self._calcular_bonus_proximidad(new_x, new_y)
+			return recompensa_proximidad, self.game_over
 
 	def reset(self):
 		self.board = [[0 for _ in range(10)] for _ in range(10)]
@@ -125,4 +126,24 @@ class Board:
 	def printmap(self):
 		for i in self.board:
 			print(i)
+	
+	def _calcular_bonus_proximidad(self, head_x, head_y):
+		"""
+		Da pequeño bonus si la cabeza está cerca de una manzana verde
+		"""
+		min_dist = float('inf')
 		
+		# Encontrar manzana verde más cercana
+		for y in range(10):
+			for x in range(10):
+				if self.board[y][x] == 2:  # Manzana verde
+					dist = abs(head_x - x) + abs(head_y - y)  # Distancia Manhattan
+					min_dist = min(min_dist, dist)
+		
+		# Bonus muy pequeño basado en proximidad
+		if min_dist <= 2:
+			return 0.5
+		elif min_dist <= 4:
+			return 0.2
+		else:
+			return 0

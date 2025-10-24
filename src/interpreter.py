@@ -66,13 +66,13 @@ class Interpreter:
 
 	def get_compressed_state(self):
 		"""
-		Estado ultra-simplificado para aprender más rápido.
-		Solo tipo de objeto (sin distancia exacta), usando categorías.
+		Estado con información de peligros Y comida.
+		Más rico que solo DANGER/SAFE pero no demasiado complejo.
 		"""
 		full_state = self.get_state()
 		lines = full_state.strip().split('\n')
 		
-		# Encontrar la cabeza
+		# Encontrar la línea con la H (cabeza)
 		head_line_idx = None
 		for i, line in enumerate(lines):
 			if 'H' in line:
@@ -80,28 +80,28 @@ class Interpreter:
 				head_col = line.index('H')
 				break
 		
+		# Extraer información de cada dirección
 		state_compressed = []
 		
-		# Para cada dirección: solo categorizar el peligro
 		for direction in ['UP', 'DOWN', 'LEFT', 'RIGHT']:
 			tipo, dist = self._extract_direction_info(lines, head_line_idx, head_col, direction)
 			
-			# Simplificar: solo 3 categorías
+			# Categorizar con más detalle
 			if tipo in ['W', 'S']:  # Peligro
-				if dist == 1:
-					categoria = 'DANGER_CLOSE'
+				if dist <= 1:
+					categoria = 'DANGER_IMM'  # Immediate
 				elif dist <= 3:
 					categoria = 'DANGER_NEAR'
 				else:
 					categoria = 'DANGER_FAR'
-			elif tipo == 'G':  # Comida buena
+			elif tipo == 'G':  # Manzana verde
 				if dist <= 2:
 					categoria = 'FOOD_CLOSE'
 				elif dist <= 5:
 					categoria = 'FOOD_NEAR'
 				else:
 					categoria = 'FOOD_FAR'
-			elif tipo == 'R':  # Comida mala
+			elif tipo == 'R':  # Manzana roja
 				if dist <= 2:
 					categoria = 'BAD_CLOSE'
 				else:
