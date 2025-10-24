@@ -74,6 +74,7 @@ class Board:
 	def reset(self):
 		self.board = [[0 for _ in range(10)] for _ in range(10)]
 		self.len = 3
+		self.game_over = False
 		self.segments = []
 		while True:
 			x = random.randint(0, 9)
