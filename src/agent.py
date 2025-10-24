@@ -5,8 +5,8 @@ class Agent:
     def __init__(self):
         self.q_table = {}
         self.epsilon = 1.0
-        self.alpha = 0.1
-        self.gamma = 0.9
+        self.alpha = 0.2
+        self.gamma = 0.95
     
     def seleccionar_accion(self, estado):
         """

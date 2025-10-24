@@ -56,9 +56,14 @@ class Board:
 			return 10, self.game_over
 		elif val == 3:  # manzana roja
 			self.len -= 1
-			x, y = self.segments[-1]
-			self.board[y][x] = 0
-			self.segments.pop()
+			if len(self.segments) > 1:
+				x, y = self.segments[-1]
+				self.board[y][x] = 0
+				self.segments.pop()
+			if len(self.segments) > 1:
+				x, y = self.segments[-1]
+				self.board[y][x] = 0
+				self.segments.pop()
 			self.snk_eats_apple(3)
 			if self.len == 0:
 				self.game_over = True

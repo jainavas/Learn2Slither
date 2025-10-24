@@ -8,8 +8,12 @@ class Interpreter:
 		state = ""
 	
 		# UP - construir desde arriba hacia la cabeza para que aparezca arriba
+		for x in range(0, head_x + 1):
+			state += " "
 		state += "W\n"
-		for y in range(0, head_y):  # Desde 0 hasta justo antes de la cabeza
+		for y in range(0, head_y): # Desde 0 hasta justo antes de la cabeza
+			for x in range(0, head_x + 1):
+				state += " " 
 			char = self.get_char_at(head_x, y)
 			state += char + "\n"
 			if char == "W":
@@ -35,11 +39,14 @@ class Interpreter:
 		
 		# DOWN - desde la cabeza hacia abajo
 		for y in range(head_y + 1, 10):
+			for x in range(0, head_x + 1):
+				state += " "
 			char = self.get_char_at(head_x, y)
 			state += char + "\n"
 			if char == "W":
 				break
-		
+		for x in range(0, head_x + 1):
+			state += " "
 		state += "W"
 		
 		return state
