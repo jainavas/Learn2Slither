@@ -17,7 +17,7 @@ def train(num_episodes=10, verbose=True):
     
     for episode in range(num_episodes):
         board.reset()
-        estado = interpreter.get_state()
+        estado = interpreter.get_compressed_state()
         game_over = False
         steps = 0
         max_length = 0
@@ -33,13 +33,13 @@ def train(num_episodes=10, verbose=True):
             if game_over:
                 siguiente_estado = None
             else:
-                siguiente_estado = interpreter.get_state()
+                siguiente_estado = interpreter.get_compressed_state()
             
             # Agent aprende
             agent.update_q_value(estado, accion, recompensa, siguiente_estado)
             
             # Actualizar estado para siguiente iteración
-            estado = siguiente_estado if siguiente_estado is not None else interpreter.get_state()
+            estado = siguiente_estado if siguiente_estado is not None else interpreter.get_compressed_state()
             
             steps += 1
             max_length = max(max_length, board.get_length())
@@ -79,7 +79,7 @@ def test(agent, num_episodes=3, verbose=True):
     
     for episode in range(num_episodes):
         board.reset()
-        estado = interpreter.get_state()
+        estado = interpreter.get_compressed_state()
         game_over = False
         steps = 0
         
@@ -88,7 +88,7 @@ def test(agent, num_episodes=3, verbose=True):
             recompensa, game_over = board.move_snake(accion)
             
             if not game_over:
-                estado = interpreter.get_state()
+                estado = interpreter.get_compressed_state()
             
             steps += 1
             if steps > 1000:
