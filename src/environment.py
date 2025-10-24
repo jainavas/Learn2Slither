@@ -33,48 +33,51 @@ class Board:
 		new_x = self.segments[0][0] + dx
 		new_y = self.segments[0][1] + dy
 		
-		# Validar límites
+		# 1. PRIMERO: Validar límites del tablero
 		if not self.is_valid_position(new_x, new_y):
 			self.game_over = True
-			return -50, self.game_over
+			return -10, self.game_over
 		
+		# 2. SEGUNDO: Ver qué hay en la nueva posición ANTES de moverse
 		val = self.board[new_y][new_x]
 		
-		# Colisión consigo mismo
-		if val == 1:
+		# 3. TERCERO: Validar colisión con cuerpo
+		if val == 1:  # Es parte de la serpiente
 			self.game_over = True
-			return -50, self.game_over
+			return -10, self.game_over
 		
-		# Mover cabeza
+		# 4. AHORA SÍ: Mover la cabeza
 		self.segments.insert(0, (new_x, new_y))
 		self.board[new_y][new_x] = 1
 		
-		# Según qué come
-		if val == 2:  # manzana verde
+		# 5. Procesar según qué comió
+		if val == 2:  # Manzana verde
 			self.len += 1
 			self.snk_eats_apple(2)
-			return 10, self.game_over
-		elif val == 3:  # manzana roja
+			return 10, self.game_over  # Recompensa alta
+			
+		elif val == 3:  # Manzana roja
+			# Reducir longitud (eliminar 2 segmentos)
+			for _ in range(2):
+				if len(self.segments) > 1:
+					tail_x, tail_y = self.segments[-1]
+					self.board[tail_y][tail_x] = 0
+					self.segments.pop()
+			
 			self.len -= 1
-			if len(self.segments) > 1:
-				x, y = self.segments[-1]
-				self.board[y][x] = 0
-				self.segments.pop()
-			if len(self.segments) > 1:
-				x, y = self.segments[-1]
-				self.board[y][x] = 0
-				self.segments.pop()
 			self.snk_eats_apple(3)
-			if self.len == 0:
+			
+			if self.len <= 0:
 				self.game_over = True
-				return -50, self.game_over
+				return -10, self.game_over
 			else:
-				return -5, self.game_over
-		else:  # val == 0
-			old_x, old_y = self.segments[-1]
-			self.board[old_y][old_x] = 0
+				return -1, self.game_over
+		else:  # Casilla vacía (val == 0)
+			# Eliminar la cola
+			tail_x, tail_y = self.segments[-1]
+			self.board[tail_y][tail_x] = 0
 			self.segments.pop()
-			return -0.1, self.game_over
+			return 0, self.game_over  # Pequeña recompensa por sobrevivir
 
 	def reset(self):
 		self.board = [[0 for _ in range(10)] for _ in range(10)]

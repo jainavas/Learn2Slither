@@ -66,16 +66,13 @@ class Interpreter:
 
 	def get_compressed_state(self):
 		"""
-		Versión comprimida del estado, extrayendo info del get_state() original.
-		Garantiza que usamos EXACTAMENTE la misma información visible.
+		Estado ultra-simplificado para aprender más rápido.
+		Solo tipo de objeto (sin distancia exacta), usando categorías.
 		"""
-		# Obtener el estado completo en string
 		full_state = self.get_state()
-		
-		# Dividir por líneas
 		lines = full_state.strip().split('\n')
 		
-		# Encontrar la línea con la H (cabeza)
+		# Encontrar la cabeza
 		head_line_idx = None
 		for i, line in enumerate(lines):
 			if 'H' in line:
@@ -83,24 +80,36 @@ class Interpreter:
 				head_col = line.index('H')
 				break
 		
-		# Extraer información de cada dirección
 		state_compressed = []
 		
-		# UP: desde head_line_idx-1 hacia arriba (índice 0)
-		up_info = self._extract_direction_info(lines, head_line_idx, head_col, 'UP')
-		state_compressed.append(up_info)
-		
-		# DOWN: desde head_line_idx+1 hacia abajo
-		down_info = self._extract_direction_info(lines, head_line_idx, head_col, 'DOWN')
-		state_compressed.append(down_info)
-		
-		# LEFT: en la misma línea, desde head_col-1 hacia la izquierda
-		left_info = self._extract_direction_info(lines, head_line_idx, head_col, 'LEFT')
-		state_compressed.append(left_info)
-		
-		# RIGHT: en la misma línea, desde head_col+1 hacia la derecha
-		right_info = self._extract_direction_info(lines, head_line_idx, head_col, 'RIGHT')
-		state_compressed.append(right_info)
+		# Para cada dirección: solo categorizar el peligro
+		for direction in ['UP', 'DOWN', 'LEFT', 'RIGHT']:
+			tipo, dist = self._extract_direction_info(lines, head_line_idx, head_col, direction)
+			
+			# Simplificar: solo 3 categorías
+			if tipo in ['W', 'S']:  # Peligro
+				if dist == 1:
+					categoria = 'DANGER_CLOSE'
+				elif dist <= 3:
+					categoria = 'DANGER_NEAR'
+				else:
+					categoria = 'DANGER_FAR'
+			elif tipo == 'G':  # Comida buena
+				if dist <= 2:
+					categoria = 'FOOD_CLOSE'
+				elif dist <= 5:
+					categoria = 'FOOD_NEAR'
+				else:
+					categoria = 'FOOD_FAR'
+			elif tipo == 'R':  # Comida mala
+				if dist <= 2:
+					categoria = 'BAD_CLOSE'
+				else:
+					categoria = 'BAD_FAR'
+			else:  # Vacío
+				categoria = 'SAFE'
+			
+			state_compressed.append(categoria)
 		
 		return tuple(state_compressed)
 
