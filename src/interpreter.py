@@ -1,5 +1,3 @@
-from environment import Board
-
 class Interpreter:
 	def __init__(self, board):
 		self.env = board

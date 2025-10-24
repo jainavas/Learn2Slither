@@ -6,6 +6,7 @@ class Board:
 		self.board = [[0 for _ in range(10)] for _ in range(10)]
 		self.direction = "UP"
 		self.len = 0
+		self.game_over = False
 		self.reset()
 		pass
 
@@ -35,14 +36,14 @@ class Board:
 		# Validar límites
 		if not self.is_valid_position(new_x, new_y):
 			self.game_over = True
-			return False
+			return -100, self.game_over
 		
 		val = self.board[new_y][new_x]
 		
 		# Colisión consigo mismo
 		if val == 1:
 			self.game_over = True
-			return False
+			return -100, self.game_over
 		
 		# Mover cabeza
 		self.segments.insert(0, (new_x, new_y))
@@ -50,20 +51,25 @@ class Board:
 		
 		# Según qué come
 		if val == 2:  # manzana verde
-			self.length += 1
+			self.len += 1
 			self.snk_eats_apple(2)
+			return 20, self.game_over
 		elif val == 3:  # manzana roja
-			self.length -= 1
+			self.len -= 1
+			x, y = self.segments[-1]
+			self.board[y][x] = 0
+			self.segments.pop()
 			self.snk_eats_apple(3)
-			if self.length == 0:
+			if self.len == 0:
 				self.game_over = True
-				return False
+				return -100, self.game_over
+			else:
+				return -10, self.game_over
 		else:  # val == 0
 			self.segments.pop()
 			old_x, old_y = self.segments[-1]
 			self.board[old_y][old_x] = 0
-		
-		return True
+			return -1, self.game_over
 
 	def reset(self):
 		self.board = [[0 for _ in range(10)] for _ in range(10)]
@@ -109,3 +115,4 @@ class Board:
 	def printmap(self):
 		for i in self.board:
 			print(i)
+		
