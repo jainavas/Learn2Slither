@@ -118,7 +118,7 @@ def test(agent, num_episodes=3, verbose=True, show_visual=False, delay_ms=200):
     
     # Guardar epsilon original y establecer a 0 (sin exploración)
     original_epsilon = agent.epsilon
-    agent.epsilon = 0.05
+    agent.epsilon = 0.05 # Dejar un minimo de exploracion para evitar bucles infinitos en circulos
     
     total_length = 0
     total_steps = 0
